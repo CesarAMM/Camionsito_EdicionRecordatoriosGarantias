@@ -1,0 +1,20 @@
+<script src="js/TempleteHTML.js"></script>
+<script src="jquery.js"></script>
+<script src="js/FuncionesGenerales.js"></script>
+<script src="umd/popper.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="xlsx.full.min.js"></script>
+<script src="../FileSaver.min.js"></script>
+<script src="chosen.jquery.js"></script>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    //Chosen-JS
+    $('.chosen-modal').chosen()
+    $('.chosen-js').chosen({no_results_text: "No hay resultados...",allow_single_deselect: true});
+    $(".chosen-js").chosen().on("chosen:showing_dropdown", function(event) {  
+        $(".chosen-js").trigger('chosen:updated');                                                                           
+    });
+</script>

@@ -1,0 +1,41 @@
+  
+  .bg-gradient-blue {
+    background: #0B486B;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #F56217, #0B486B);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #F56217, #0B486B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
+  }
+  
+  .bg-transparent-blue{
+    background-color: #00000085;
+  }
+  
+  .bg-navbar{
+    background: #0B486B;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #072f46, #0B486B, #009494);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #072f46, #0B486B, #009494); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: white;
+  }
+
+.bg-naranja{
+  background-color: #fd7a2e;
+}
+
+.bg-info{
+  background-color: #0078ae !important;
+}
+
+.border-info{
+  border-color: #0078ae !important;
+}
+
+.btn-info{
+  color: #fff;
+  background-color: #0078ae;
+  border-color: #0078ae;
+}
+
+.btn-info:hover {
+  background-color: #00567e;
+  border-color: #00567e;
+}

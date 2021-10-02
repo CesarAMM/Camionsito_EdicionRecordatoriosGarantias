@@ -1,0 +1,38 @@
+{
+  "name": "edicion_recordatorios_dominios",
+  "version": "1.0.0",
+  "description": "Edicion de Garantias y Recordatorios Dominos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/Dominos_Edicion_Recordatorios_Garantias.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "bootstrap": "^5.1.0",
+    "chosen-js": "^1.8.7",
+    "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
+    "ejs": "^3.1.6",
+    "events": "^3.3.0",
+    "express": "^4.17.1",
+    "express-csp-header": "^4.1.0",
+    "express-fileupload": "^1.2.1",
+    "express-session": "^1.17.2",
+    "file-saver": "^2.0.5",
+    "helmet": "^4.6.0",
+    "jquery": "^3.6.0",
+    "json-sql": "^0.5.0",
+    "middleware": "^1.0.0",
+    "morgan": "^1.10.0",
+    "mssql": "^6.3.2",
+    "nodemailer": "^6.6.3",
+    "path": "^0.12.7",
+    "popper.js": "^1.16.1",
+    "xlsx": "^0.16.9"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('parts/head.html')%>
+</head>
+
+<body class="bg-light">
+    <%-include('parts/navbar.html')%>
+        <main class="pt-5 container-md">
+            <div class="row pt-4">
+                <div class="custom-file col-lg-5">
+                    <input type="file" class="custom-file-input" id="my_file_input" name="input-excel" lang="es">
+                    <label class="custom-file-label" for="customFile">Seleccione un archivo</label>
+                </div>
+                <div class="col-auto">
+                    <button type="button" id="btnPreSave" class="btn btn-outline-primary" disabled><i class="fas fa-upload"></i></button>
+                </div>
+                <div class="col-5">
+                    <select class="form-control chosen-js" id="getTienda" onchange="VerBaseDatosMatriz()"></select>
+                </div>
+                <div class="col-auto">
+                    <button type="button" id="btnDescarga" class="btn btn-outline-success"><i class="fas fa-download"></i></button>
+                </div>
+            </div>
+            <hr>
+        </main>
+        <br>
+        <div class="card mb-4 box-shadow h-md-250">
+            <div class="card-body">
+                <h5 class="d-inline-block mb-2 text-dark">Vista previa de información</h5>
+                <div class="container-fluid">
+                    <div class="d-flex flex-column">
+                        <div class="table table-responsive pl-3 pr-5 table-striped table-bordered table-sm mx-auto" id="VistaTabla">
+                            <table>
+                                <thead class="text-center text-white bg-dark">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Tienda</th>
+                                        <th>Departamento</th>
+                                        <th>Zona_Municipio</th>
+                                        <th>Rango</th>
+                                        <th>Palabra_Clave</th>
+                                        <th>Calle_Minima</th>
+                                        <th>Calle_Maxima</th>
+                                        <th>Avenida_Minima</th>
+                                        <th>Avenida_Maxima</th>
+                                        <th>Kilometro_Minimo</th>
+                                        <th>Kilometro_Maximo</th>
+                                        <th>Minimo</th>
+                                        <th>Garantia</th>
+                                        <th>Tiempo</th>
+                                        <th>Hora_Limite</th>
+                                        <th>Comentarios</th>
+                                        <th>Servicio</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablebodygarantias"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="position: fixed; min-height: 0px; bottom: 1%; right: 1%;" class="w-25" id="NotificacionesRecordatorios"></div>
+        <%-include('parts/scripts.html')%>
+        <script src="js/Llenado.js"></script>
+</body>
+
+</html>
