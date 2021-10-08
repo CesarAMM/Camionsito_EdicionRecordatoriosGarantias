@@ -1,24 +1,42 @@
 <nav class="py-2 border-bottom bg-navbar fixed-top">
-    <div class="container-lg d-flex flex-wrap">
-        <a href="#" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
-            <img src="../img/Dominos.png" width="40" height="40" class="d-inline-block align-top" alt="">
-            <span class="fs-3 text-white">&nbsp; Dominos - <%=page%></span>
+  <div class="container-lg d-flex flex-wrap">
+    <a href="/Recordatorios" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+      <span class="fs-3 text-orange fw-bold">&nbsp; Camioncito - <%=page%></span>
+    </a>
+    <div class="d-flex align-items-center">
+      <div class="flex-shrink-0 dropdown">
+        <a href="#" class="d-block text-orange text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="fw-bold text-orange"><%=user%> <i class="fa fa-user"></i></span>
         </a>
-        <div class="d-flex align-items-center">
-            <div class="flex-shrink-0 dropdown">
-              <a href="#" class="d-block link-light  text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="fw-bold text-white"><i class="fa fa-user"></i>&nbsp;camazariegos</span>
-              </a>
-              <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                <%if(rol >= 13){%>
-                    <li><a class="dropdown-item" href="/Llenado"><i class="fas fa-plus"></i>&nbsp; Llenado</a></li>
-                    <li><a class="dropdown-item" href="/Edicion"><i class="fas fa-edit"></i>&nbsp; Modificacion</a></li>
-                <%}%>
-                <li><a class="dropdown-item" href="/Recordatorios"><i class="fas fa-search"></i> &nbsp;Recordatorios</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="/"><i class="fa fa-sign-out-alt"></i>&nbsp; Cerrar Sesion</a></li>
-              </ul>
-            </div>
-          </div>
+        <ul class="dropdown-menu text-small shadow">
+          <%if(rol >= 13){%>
+            <li><a class="dropdown-item" href="/Llenado"><i class="fas fa-plus"></i>&nbsp; Llenado</a></li>
+            <li><a class="dropdown-item" href="/Edicion"><i class="fas fa-edit"></i>&nbsp; Modificacion</a></li>
+          <%}%>
+          <li><a class="dropdown-item" href="/Recordatorios"><i class="fas fa-search"></i> &nbsp;Recordatorios</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="/"><i class="fa fa-sign-out-alt"></i>&nbsp; Cerrar Sesion</a></li>
+        </ul>
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <%if(IdPage === 'Recordatorios'){%>
+      <div class="flex-shrink-0 dropdown">
+        <a href="#" class="d-block text-orange text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="fw-bold text-orange"> Opciones <i class="fa fa-external-link-alt"></i></span>
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+          <%if(rol >= 12){%>
+            <li><a class="dropdown-item" href="#" role="button" id="btn_RestauracionRecordatorios"><i class="fas fa-reply-all"></i>&nbsp; Restauración Recordatorios</a></li>
+            <%if(rol >= 13){%>
+              <li><a class="dropdown-item" href="#" role="button" id="btn_CrearTienda"><i class="fas fa-store"></i>&nbsp; Crear Tienda</a></li>
+              <%}%>
+          <%}%>
+          <li><a class="dropdown-item" href="#" role="button" id="btn_ModificacionDeTiempos"><i class="fas fa-edit"></i> &nbsp; Modificación de Tiempos</a></li>
+          <li><a class="dropdown-item" href="#" role="button" id="btn_HorarioTiendas"><i class="fa fa-clock"></i>&nbsp; Horario de Tienda</a></li>
+          <li><a class="dropdown-item" href="#" role="button" id="btn_DescargaBitacora"><i class="fas fa-download"></i> &nbsp; Descargar Bitacora</a></li>
+        </ul>
+      </div>
+      <%}%>
     </div>
-  </nav>
+  </div>
+</nav>

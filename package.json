@@ -4,7 +4,7 @@
   "description": "Edicion de Garantias y Recordatorios Dominos",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/Dominos_Edicion_Recordatorios_Garantias.js"
+    "dev": "nodemon src/EdicionRecordatoriosGarantias.js"
   },
   "author": "",
   "license": "ISC",

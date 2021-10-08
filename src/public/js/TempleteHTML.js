@@ -3,21 +3,24 @@ const HTML_CrearTienda = `
 <div class="row">
 <div class="col-12">
     <p>
-        Para poder crear una nueva tienda primero debes de cargar la sectorización de la tienda,
-        de lo contrario no vas a encontrar la tienda en el listado
+        Verifica bien el codigo y nombre de la tienda de Camioncito, ya que si no cargas los datos correctos
+        los recordatorios no funcionara correctamente.
     </p>
 </div>
 </div>
 <hr>
 <div class="row">
 <div class="col-12">
-    <small>Selecciona la Tienda</small>
-    <input type="text" class="form-control form-control-sm" id="idtiendanueva">
+    <small>Nombre de la tienda</small>
+    <div class="input-group">
+        <input type="text" class="form-control form-control-sm" placeholder="Codigo de Tienda" id="inp_CodigoTienda">
+        <input type="text" class="form-control form-control-sm" placeholder="Nombre de la Tienda" id="inp_NombreTienda">
+    </div>
 </div>
 </div>
 <div class="row">
 <div class="col-12">
-    <p>Recuerda que tiene que ir en formato de 24hrs.</p>
+    <p>Recuerda que el formato de hora es de 24 hrs.</p>
 </div>
 <div class="col-12">
     <small>Lunes</small>
@@ -80,7 +83,7 @@ const HTML_CrearTienda = `
     </div>
 </div>
 <div class="col-12">
-    <small>Domingp</small>
+    <small>Domingo</small>
     <div class="input-group mb-3">
         <input type="text" placeholder="Apertura" class="form-control form-control-sm" id="inputaperturadomingo">
         <div class="input-group-prepend">
@@ -182,13 +185,8 @@ const HTML_ModificacionTiempos = `
             <select class="form-control" id="input_Modificaciontiempos">
             <option value="0">-- Seleccione --</option>
                 <option value="1">Tiempos Normales</option>
-                <option value="2">40 Minutos</option>
-                <option value="3">45 Minutos</option>
-                <option value="4">50 Minutos</option>
-                <option value="5">1 Hora</option>
-                <option value="6">1 Hora y 15 Minutos</option>
-                <option value="7">1 Hora y 30 Minutos</option>
-                <option value="8">Baja</option>
+                <option value="2">1 HORA</option>
+                <option value="3">1 HORA 30 MINUTOS</option>
             </select>
         </div>
         <div class="col-6">

@@ -3,34 +3,21 @@
 <head>
     <%-include('parts/head.html')%>
 </head>
-<body class="bg-light">
+<body class="bg-gris">
     <%-include('parts/navbar.html')%>
     <div class="pt-5"></div>
     <div class="pt-2"></div>
-    <header class="px-3 py-2 border-bottom mb-3">
-        <div class="container d-flex flex-wrap justify-content-center">
-            <button type="button" class="btn btn-warning" id="btn_DescargaBitacora">Descargar Bitacora</button>
-            <button type="button" class="btn btn-primary" id="btn_HorarioTiendas">Horario de Tienda</button>
-            <%if(rol >= 12){%>
-                <button type="button" class="btn btn-danger" id="btn_RestauracionRecordatorios">Restauración Recordatorios</button>
-                <%if(rol >=13){%>
-                    <button type="button" class="btn btn-success" id="btn_CrearTienda">Crear Tienda</button>
-                    <%}%>
-            <%}%>
-            <button type="button" class="btn btn-secondary" id="btn_ModificacionDeTiempos">Modificacion de Tiempos</button>
-        </div>
-    </header>
     <main class="container-lg pt-2">
         <div class="row pt-3">
             <div class="col-4">
                 <small class="fw-bold">Tienda</small>
-                <select id="id_Tienda" class="chosen-js form-control"></select>
+                <select id="id_Tienda" class="chosen-js form-control">
+                    <option value="0">-- Seleccione Una Tienda --</option>
+                </select>
             </div>
             <div class="col-5 pt-4">
                 <input class="form-check-input" type="checkbox" id="chechTiendasBajas" onclick="VerTiendasBajas()">
-				<label class="form-check-label" for="chechTiendasBajas">
-                    Tiendas de Bajas
-				</label>
+				<label class="form-check-label" for="chechTiendasBajas"> Tiendas de Baja</label>
             </div>
             
         </div>
@@ -38,453 +25,28 @@
         <div class="row">
             <div class="col-sm-4">
                 <small class="fw-bold">Tiempos</small>
-                <select class="form-control form-control-sm" id="id_Tiempos"></select>
+                <select class="form-control form-control-sm" id="id_Tiempos" name="Id_Tiempo"></select>
             </div>
             <div class="col-sm-5">
                 <small class="fw-bold">Motivo de tiempo</small>
                 <div class="input-group mb-3" role="group">
-                    <input type="text" class="form-control form-control-sm" id="id_MotivoTiempo">
+                    <input type="text" class="form-control form-control-sm" id="Id_Motivo">
                     <div class="input-group-prepend">
-                        <button class="btn btn-primary btn-sm" id="btnGuardarmotivotiempo">Guardar</button>
+                        <button class="btn btn-turquesa btn-sm fw-bold" id="btn_Motivo" name="Motivo">Guardar</button>
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
                 <small class="fw-bold">POS</small>
-                <select id="POS" class="form-control form-control-sm" onchange="Actualizacion_datos_generalizados(this.id)"></select>
+                <select id="POS" class="form-control form-control-sm" name="Id_Posmovil"></select>
             </div>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-md-12">
                 <small class="fw-bold">Comentario</small>
                 <div class="input-group mb-3">
-                    <textarea class="form-control" id="id_comentario" cols="20" rows="3" maxlength="250"></textarea>
-                    <button class="btn btn-primary btn-sm" id="btnGuardarcomentario">Guardar</button>
-                </div>
-            </div>
-            <div class="col-6">
-                <small class="fw-bold">Impulsar</small>
-                <div class="input-group mb-3">
-                    <textarea class="form-control" id="id_impulsar" cols="20" rows="3" maxlength="250"></textarea>
-                    <button class="btn btn-primary btn-sm" id="btnImpulsar">Guardar</button>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="accordion" id="accordionExample">
-                <div class="row pt-2">
-                    <div class="col-sm-12">
-                        <!--Seccion de Pasteles-->
-                        <div class="card border-dark">
-                            <div class="card-header text-center bg-secondary p-0" id="headBebidas" data-bs-toggle="collapse" href="#collapsePasteles" data-bs-toggle="collapse" 
-                                data-bs-target="#collapsePasteles" aria-expanded="false" aria-controls="collapsePasteles" style="cursor: pointer;">
-                                <span class="py-0 px-5 mx-0 my-2 text-white fs-4">
-                                    Bebidas
-                                </span>
-                            </div>
-                            <div id="collapsePasteles" class="collapse" aria-labelledby="headBebidas" data-parent="#accordionExample">
-                                <div class="card-body p-0 mx-3">
-                                    <div class="row">
-                                        <div class="col-2 text-white bg-danger">
-                                            <div class="row pt-2">
-                                                <div class="col-sm-12 text-center">
-                                                    <h5>Coca-Cola</h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="1">
-                                                        <label class="form-check-label fw-bold" for="iditem_1">Doble Litro</label>
-                                                        <input class="form-check-input" type="checkbox" id="iditem_1" value="1" checked>
-                                                    </div>    
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="2">
-                                                        <label class="form-check-label fw-bold" for="iditem_2">Lata</label>
-                                                        <input class="form-check-input" type="checkbox" id="iditem_2" value="2" checked>
-                                                    </div> 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-2 bg-naranja text-white">
-                                            <div class="row pt-2">
-                                                <div class="col-sm-12 text-center">
-                                                    <h5>Fanta Naranja</h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="5">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_5" value="5" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_5">Doble Litro</label>
-                                                    </div>    
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="6">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_6" value="6" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_6">Lata</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-2 bg-success text-white">
-                                            <div class="row pt-2">
-                                                <div class="col-12 text-center">
-                                                    <h5>Sprite</h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="3">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_3" value="3" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_3">Doble Litro</label>
-                                                    </div>    
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="4">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_4" value="4" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_4">Lata</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-2 text-white bg-secondary">
-                                            <div class="row pt-2">
-                                                <div class="col-12">
-                                                    <h5>Coca-Cola Light</h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="9">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_9" value="9" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_9">Doble Litro</label>
-                                                    </div>    
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="10">
-                                                        <input class="form-check-input " type="checkbox" id="iditem_10" value="10" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_10">Lata</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-2 bg-dark text-white">
-                                            <div class="row pt-2">
-                                                <div class="col-12 text-center">
-                                                    <h5>Coca-Cola Zero</h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="7">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_7" value="7" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_7">Doble Litro</label>
-                                                    </div>    
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-check form-switch class-item" id="8">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_8" value="8" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_8">Lata</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-2 text-white">
-                                            <div class="row pt-2 bg-info">
-                                                <div class="col-12 text-center p-2">
-                                                    <div class="form-check form-switch class-item" id="11">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_11" value="11" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_11">Agua</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Seccion de Costillas y Alitas-->
-                        <div class="card border-dark">
-                            <div class="card-header text-center bg-secondary p-0" id="HeadAlitasCostillas" data-bs-toggle="collapse" href="#SeccionAlasCostillas" data-bs-toggle="collapse" 
-                                data-bs-target="#SeccionAlasCostillas" aria-expanded="false" aria-controls="SeccionAlasCostillas" style="cursor: pointer;">
-                                <span class="py-0 px-5 mx-0 my-2 text-white fs-4">
-                                    Alitas / Costillitas
-                                </span>
-                            </div>
-                            <div id="SeccionAlasCostillas" class="collapse" aria-labelledby="HeadAlitasCostillas" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_22" value="22" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_22">Alitas</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_23" value="23" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_23">Costillas</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            <!--Seccion para las masas-->
-                        <div class="card border-dark">
-                            <div class="card-header text-center bg-secondary p-0" id="HeadMasas" data-bs-toggle="collapse" href="#SeccionMasas" data-bs-toggle="collapse" 
-                                data-bs-target="#SeccionMasas" aria-expanded="false" aria-controls="SeccionMasas" style="cursor: pointer;">
-                                <span class="py-0 px-5 mx-0 my-2 text-white fs-4">
-                                    Masas
-                                </span>
-                            </div>
-                            <div id="SeccionMasas" class="collapse" aria-labelledby="HeadMasas" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_19" value="19" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_19">Masa Personal</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_18" value="18" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_18">Masa Mediana</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_20" value="20" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_20">Masa Grande</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_37" value="37" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_37">Masa Dominator</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check form-switch class-item">
-                                                <input class="form-check-input" type="checkbox" id="iditem_21" value="21" checked>
-                                                <label class="form-check-label fw-bold" for="iditem_21">Masa Pan Pizza</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Seccion de Topings-->
-                        <div class="card border-dark">
-                            <div class="card-header text-center bg-secondary p-0" id="HeadTopings" data-bs-toggle="collapse" href="#SeccionTopings" data-bs-toggle="collapse" 
-                                data-bs-target="#SeccionTopings" aria-expanded="false" aria-controls="SeccionTopings" style="cursor: pointer;">
-                                <span class="py-0 px-5 mx-0 my-2 text-white fs-4">
-                                    Topings
-                                </span>
-                            </div>
-                            <div id="SeccionTopings" class="collapse" aria-labelledby="HeadTopings" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6 border-end">
-                                            <div class="row">
-                                                <div class="col-md-12 text-center text-dark fw-bold py-2">Vegetales</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_25" value="25" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_25">Aceitunas Negras</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_26" value="26" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_26">Cebolla</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_27" value="27" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_27">Champiñones</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_28" value="28" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_28">Chile Verde</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_38" value="38" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_38">Piña</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_29" value="29" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_29">Tomate</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="row">
-                                                <div class="row">
-                                                    <div class="col-md-12 text-center text-dark fw-bold py-2">Carnes</div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_31" value="31" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_31">Jamon</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_30" value="30" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_30">Carne Molida</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_32" value="32" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_32">Pepperoni</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_34" value="34" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_34">Salchicha Italiana</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_33" value="33" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_33">Salami</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_35" value="35" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_35">Tocino</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_36" value="36" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_36">Rostbeef</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--=Finaliza la seccion de topings=-->
-                        <div class="card border-dark">
-                            <div class="card-header text-center bg-secondary p-0" id="HeadExtras" data-bs-toggle="collapse" href="#SeccionExtras" data-bs-toggle="collapse" 
-                                data-bs-target="#SeccionExtras" aria-expanded="false" aria-controls="SeccionExtras" style="cursor: pointer;">
-                                <span class="py-0 px-5 mx-0 my-2 text-white fs-4">
-                                    Extras
-                                </span>
-                            </div>
-                            <div id="SeccionExtras" class="collapse" aria-labelledby="HeadExtras" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_12" value="12" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_12">Katsup</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_13" value="13" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_13">Dulce de Leche</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_14" value="14" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_14">Ranch</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_15" value="15" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_15">Salsa Barbacoa</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_16" value="16" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_16">Salsa Cayene</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_17" value="17" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_17">Salsa Dominos</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_24" value="24" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_24">Orilla de Queso</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_40" value="40" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_40">Platos</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-check form-switch class-item">
-                                                        <input class="form-check-input" type="checkbox" id="iditem_41" value="41" checked>
-                                                        <label class="form-check-label fw-bold" for="iditem_41">Vasos</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <textarea class="form-control" id="Id_Comentarios" cols="20" rows="3" maxlength="500"></textarea>
+                    <button class="btn btn-turquesa btn-sm fw-bold" id="btn_Comentarios" name="Comentarios">Guardar</button>
                 </div>
             </div>
         </div>
@@ -507,16 +69,14 @@
         <div class="row">
             <div class="col-10">
                 <table class="table table-sm table-striped text-center">
-                    <thead class="table bg-dark text-white">
+                    <thead class="table bg-navbar">
                         <tr>
                             <th scope="col">Fecha</th>
                             <th scope="col" style="width: 150px;">Usuario</th>
                             <th scope="col">Modificacion</th>
                         </tr>
                     </thead>
-                    <tbody id="idTableHistorial">
-                        
-                    </tbody>
+                    <tbody id="idTableHistorial"></tbody>
                 </table>
             </div>
         </div>

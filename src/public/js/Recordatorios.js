@@ -1,5 +1,3 @@
-//Variables Generales
-let listadotiendas= []
 
 $(document).ready(()=> {
     $.ajax({
@@ -7,42 +5,64 @@ $(document).ready(()=> {
         method: 'get',
         timeout: 15000,
         success:(data)=> {
-            listadotiendas = data.Tiendas;
-            $('#id_Tienda').append(`
-                    <option value="0">-- Seleccione Una Tienda --</option>
-                `);
-            $(data.Tiendas).each((i,e)=>{
-                $('#id_Tienda').append(`
-                    <option value="${e.Codigo_Tienda}">${e.Tienda}</option>
-                `);
-            })
-            $(data.Tiempos).each((i, e)=>{
-                $('#id_Tiempos').append(`<option value="${e.Id}">${e.Tiempo}</option>`);
-            });
-            $(data.Estado).each((i, e)=>{
-                $('#POS').append(`<option value="${e.Id}">${e.Estado}</option>`);
-            });
+            switch(Number(data.__error)){
+                case 0:
+                    localStorage.setItem('Tiendas', JSON.stringify(data.Tiendas));
+                    $(data.Tiendas).each((i,e)=>{
+                        $('#id_Tienda').append(`<option value="${e.CodigoTienda}">${e.Tienda}</option>`);
+                    })
+                    $(data.Tiempos).each((i, e)=>{
+                        $('#id_Tiempos').append(`<option value="${e.Id_Tiempo}">${e.Tiempo}</option>`);
+                    });
+                    $(data.Estado).each((i, e)=>{
+                        $('#POS').append(`<option value="${e.Id_Estado}">${e.Estado}</option>`);
+                    });
+                    MN_VS_2('Exito', 'bg-success', 'Datos Cargados')
+                    break;
+                case 1:
+                    MN_VS_2('Error!!', 'bg-danger', 'Problemas al Conectar a la Base de Datos')
+                    break;
+            }
         }
     })
 });
 
 function VerTiendasBajas(){
     const valor = document.getElementById("chechTiendasBajas").checked;
-    $('#id_Tienda').html('');
-    $.ajax({
-        url: '/getListTiendaforEstado',
-        timeout:15000,
-        method: 'post',
-        data: {
-            Valor: valor
-        },
-        success: (data) => {
-            $('#id_Tienda').append(`<option value="0">-- Seleccione Tienda --</option>`);
-            $(data).each((i,e) => {
-                $('#id_Tienda').append(`<option value="${e.Codig_Tienda}">${e.Tienda}</option>`);
-            });
+    $('#id_Tienda > option').each((i, e) => {
+        if($(e).val() != 0){
+            $(e).css('display', 'none')
         }
-    });
+    })
+    if(valor === true){
+        $.ajax({
+            url: '/getListTiendaforEstado',
+            timeout:15000,
+            method: 'post',
+            data: {
+                Valor: valor
+            },
+            success: (data) => {
+                switch(Number(data.__error)){
+                    case 0:
+                        $(data.Tiendas).each((i,e) => {
+                            $('#id_Tienda').find(`option[value="${e.CodigoTienda}"]`).css('display', 'block')
+                        });
+                        MN_VS_2('Exito', 'bg-success', 'Tiendas de baja')
+                        break;
+                    case 1:
+                        MN_VS_2('Error!!', 'bg-danger', 'Problemas al Conectar a la Base de Datos.')
+                        break;
+                }
+            }
+        });
+    }else{
+        $('#id_Tienda > option').each((i, e) => {
+            if($(e).val() != 0){
+                $(e).css('display', 'block')
+            }
+        })
+    }
 }
 
 /**
@@ -50,62 +70,30 @@ function VerTiendasBajas(){
  *      Obtener Datos     ** 
  ***************************
  */
-let localStore = window.localStorage;
 //Obtener Datos de Tiendas Dominos (comentarios, tiempos, horarios y motivos, inventario)
 $('#id_Tienda').on('change', () => {
-    const codigo_tienda = $('#id_Tienda').val();
-    localStore.removeItem('horario')
     $.ajax({
         url: '/getRecordatorios',
         timeout: 15000,
         method: 'post',
         data:{
-            codigotienda: codigo_tienda
+            codigotienda: $('#id_Tienda').val()
         },
         success: (data) =>{
-            localStore.setItem('horario', JSON.stringify(data.Horarios))
             $('#idTableHistorial').html('');
-            $('#id_Tiempos').val(data.Encabezado[0].Tiempos)
-            $('#id_MotivoTiempo').val(data.Encabezado[0].Motivo)
-            $('#POS').val(data.Encabezado[0].POS)
-            $('#id_comentario').val(data.Encabezado[0].Comentario)
-            $('#id_impulsar').val(data.Encabezado[0].Impulsar)
-            $(data.Bebidas).each((i, e) => {
-                if(e.Id_Estado == 1){
-                    $('#iditem_'+ e.Id_Item).prop('checked', true)
-                }else if (e.Id_Estado == 2){
-                    $('#iditem_'+ e.Id_Item).prop('checked', false)
-                }
-            });
-            $(data.Masas).each((i, e) => {
-                if(e.Id_Estado == 1){
-                    $('#iditem_'+ e.Id_Item).prop('checked', true)
-                }else if (e.Id_Estado == 2){
-                    $('#iditem_'+ e.Id_Item).prop('checked', false)
-                }
-            });
-            $(data.Ingredientes).each((i, e) => {
-                if(e.Id_Estado == 1){
-                    $('#iditem_'+ e.Id_Item).prop('checked', true)
-                }else if (e.Id_Estado == 2){
-                    $('#iditem_'+ e.Id_Item).prop('checked', false)
-                }
-            });
-            $(data.Extras).each((i, e) => {
-                if(e.Id_Estado == 1){
-                    $('#iditem_'+ e.Id_Item).prop('checked', true)
-                }else if (e.Id_Estado == 2){
-                    $('#iditem_'+ e.Id_Item).prop('checked', false)
-                }
-            });
-            $(data.Alitas_Costillas).each((i, e) => {
-                if(e.Id_Estado == 1){
-                    $('#iditem_'+ e.Id_Item).prop('checked', true)
-                }else if (e.Id_Estado == 2){
-                    $('#iditem_'+ e.Id_Item).prop('checked', false)
-                }
-            });
-            MN_VS_2(`Exito: ${codigo_tienda}`,'bg-success', `Se han cargado los recordatorios`)
+            switch(Number(data.__error)){
+                case 0:
+                    localStorage.setItem('horarios', JSON.stringify(data.Horarios))
+                    $('#id_Tiempos').val(data.Encabezado[0].Tiempo)
+                    $('#Id_Motivo').val(data.Encabezado[0].Motivo)
+                    $('#POS').val(data.Encabezado[0].POS)
+                    $('#Id_Comentario').val(data.Encabezado[0].Comentario)
+                    MN_VS_2(`Exito: ${$('#id_Tienda').val()}`,'bg-success', `Se han cargado los recordatorios`)
+                    break;
+                case 1:
+                    MN_VS_2(`Error!!`,'bg-danger', `Problemas de conexion.`)
+                    break;
+            }
         }
     }).fail((e) => {
         MN_VS_2('Error','bg-danger', `Codigo Error: X${e.status}, Error en la conexion a la base de datos`)
@@ -113,8 +101,7 @@ $('#id_Tienda').on('change', () => {
 })
 
 $('#id_obtenerhistorial').on('click', () => {
-    $('#idTableHistorial').html(' ');
-    if($('#id_Tienda').val() && $('#id_date').val()){
+    if($('#id_Tienda').val() != 0 && $('#id_date').val()){
         $.ajax({
             url: '/getHistorialRecordatorios',
             timeout: 15000,
@@ -124,21 +111,30 @@ $('#id_obtenerhistorial').on('click', () => {
                 fecha: $('#id_date').val()
             },
             success: (data) => {
-                $(data).each((i,e) => {
-                    $('#idTableHistorial').append(`
-                    <tr>
-                        <td>${e.Usuario}</td>
-                        <td>${VerFechaReal(e.Fecha_Hora)}</td>
-                        <td>${e.Modificacion}</td>
-                    </tr>
-                    `);
-                })
+                switch(Number(data.__error)){
+                    case 1:
+                        MN_VS_2('Error', 'bg-danger', `Error en la conexión a la base de datos.`)
+                        break;
+                    case 0:
+                        let htmlTable = '';
+                        $(data.Historial).each((i,e) => {
+                            htmlTable += `
+                            <tr>
+                                <td>${VerFechaReal(e.Fecha_Hora)}</td>
+                                <td>${e.Usuario}</td>
+                                <td>${e.Bitacora}</td>
+                            </tr>
+                            `;
+                        })
+                        $('#idTableHistorial').html(htmlTable)
+                        break;
+                }
             }
         }).fail((e) => {
             MN_VS_2('Error', 'bg-danger', `Error en la conexión a la base de datos.`)
         });
     }else{
-        if(!$('#id_Tienda').val()){
+        if(!($('#id_Tienda').val() != 0)){
             MN_VS_2('Error!!', 'bg-danger', 'Tienes que seleccionar una tienda')
         }else if(!$('#id_date').val()){
             MN_VS_2('Error!!', 'bg-danger', 'Selecciona una fecha.')
@@ -148,39 +144,55 @@ $('#id_obtenerhistorial').on('click', () => {
 
 
 //Funciones para actualizar Recordatorios de tienda
-$('#id_Tiempos').on('change', () => {
+$('#id_Tiempos, #POS').on('change', (e) => {
     if($('#id_Tienda').val() != 0){
         $.ajax({
-            url: '/upd_Tiempos_Recordatorios',
+            url: '/upd_Tiempos_POS_Recordatorios',
             timeout: 15000,
             method: 'post',
             data:{
                 codigotienda: $('#id_Tienda').val(),
-                Tiempo: $('#id_Tiempos').val()
+                dato: $('#'+ $($(e)[0].target).attr('id')).val(),
+                columna: $($(e)[0].target).attr('name')
             },
             success: (data) => {
-                MN_VS_2(`Cambio de Tiempos en: ${data[0].Tienda}`,'bg-success',data[0].User+' has modificado tiempos a: '+ data[0].Tiempo)
+                switch(Number(data.__error)){
+                    case 0:
+                        MN_VS_2(`Actualizacion de ${data.dato.Tipo}`, 'bg-success', `Has actualizado a '${data.dato.dato}'`)
+                        break;
+                    case 1:
+                        MN_VS_2('Error!!', 'bg-danger', 'Error en la conexión a la base de datos')
+                        break;
+                }
             }
         })
     }else {
-        MN_VS_2('Error!!', 'bg-danger', 'Seleccione una tienda para actualizar tiempos')
-        $('#id_Tiempos').val(1)
+        MN_VS_2('Error!!', 'bg-danger', `Seleccione una tienda para actualizar ${$($(e)[0].target).attr('name') === 'Id_Posmovil' ?'POS' : 'Tiempos'}`)
+        $('#'+$($(e)[0].target).attr('id')).val(1)
     }
 })
 
-$('#btnGuardarmotivotiempo').on('click',()=>{
+
+$('#btn_Motivo, #btn_Comentarios').on('click',(elemento)=>{
     if($('#id_Tienda').val() != 0){
         $.ajax({
-            url: '/upd_MotivoTiempo_Recordatorios',
+            url: '/upd_MotivoTiempo_Comentarios_Recordatorios',
             timeout:15000,
             method: 'post',
             data:{
                 Tienda: $('#id_Tienda').val(),
-                Motivo: $('#id_MotivoTiempo').val(),
-                Usuario: $('#usuario').html()
+                dato: $('#Id_'+$($(elemento)[0].target).attr('name')).val(),
+                columna: $($(elemento)[0].target).attr('name')
             },
             success: (data) => {
-                MN_VS_2(`Cambio de Motivos en: ${data[0].Tienda}`,'bg-success',data[0].User+': '+ data[0].Motivo)
+                switch(Number(data.__error)){
+                    case 1: 
+                    MN_VS_2(`Error!!`,'bg-danger', 'Error en la conexion a la base de datos.')
+                    break;
+                    case 0:
+                        MN_VS_2(`Cambio de ${data.dato.Tipo} en: ${$('#id_Tienda').val()}`,'bg-success', 'Actualizado') 
+                    break;
+                }
             }
         });
     }else{
@@ -189,102 +201,17 @@ $('#btnGuardarmotivotiempo').on('click',()=>{
     }
 })
 
-$('#btnGuardarcomentario').on('click',()=>{
-    if($('#id_Tienda').val() != 0){
-        $.ajax({
-            url: '/upd_Comentario_recordatorios',
-            timeout:15000,
-            method: 'post',
-            data:{
-                Tienda: $('#id_Tienda').val(),
-                Comentario: $('#id_comentario').val(),
-                Usuario: $('#usuario').html()
-            },
-            success: (data) => {
-                MN_VS_2(`Cambio de Comentario en: ${data[0].Tienda}`,'bg-success',data[0].User+': '+ data[0].Motivo)
-            }
-        });
-    }else{
-        MN_VS_2('Error!!', 'bg-danger', 'Seleccione una tienda para actualizar su comentario')
-    }
-})
-
-$('#btnImpulsar').on('click',()=>{
-    if($('#id_Tienda').val() != 0){
-        $.ajax({
-            url: '/upd_impulsar_recordatorios',
-            timeout:15000,
-            method: 'post',
-            data:{
-                Tienda: $('#id_Tienda').val(),
-                Comentario: $('#id_impulsar').val(),
-                Usuario: $('#usuario').html()
-            },
-            success: (data) => {
-                MN_VS_2(`Cambio de Impulsar en: ${data.Tienda}`,'bg-success',data.User+': '+ data.Motivo)
-            }
-        });
-    }else{
-        MN_VS_2('Error!!', 'bg-danger', 'Seleccione una tienda para actualizar su comentario')
-    }
-});
-
-$('#POS').on('change',()=>{
-    if($('#id_Tienda').val() != 0){
-        $.ajax({
-            url: '/upd_POS_recordatorios',
-            timeout:15000,
-            method: 'post',
-            data:{
-                Tienda: $('#id_Tienda').val(),
-                POS: $('#POS').val(),
-            },
-            success: (data) => {
-                MN_VS_2(`Cambio de Impulsar en: ${data.Tienda}`,'bg-success',data.User+': '+ data.Motivo)
-            }
-        });
-    }else{
-        MN_VS_2('Error!!', 'bg-danger', 'Seleccione una tienda para actualizar el POS movil')
-    }
-});
-
-$('.class-item').on('change', (elemento) => {
-        if($('#id_Tienda').val() != 0){
-            const estado = $($(elemento)[0].target)[0].checked
-            const item = $($(elemento)[0].target).attr("value")
-            let intestado = 1;
-            if(estado == false){
-                intestado = 2
-            }
-            $.ajax({
-                url: '/upd_funcionGenarelizada',
-                timeout: 15000,
-                method: 'post',
-                data: {
-                    codigotienda: $('#id_Tienda').val(),
-                    id_item: item,
-                    id_estado: intestado
-                },
-                success: (data) => {
-                    MN_VS_2(`Cambio de Impulsar en: ${data.Tienda}`,'bg-success',data.User+': '+ data.Motivo)
-                }
-            })
-        }else{
-            MN_VS_2('Error', 'bg-danger', 'Selecciona una tienda antes de actualizar.')
-        }
-})
-
 /**
  ***************************
  *      Obtener Modal     ** 
  ***************************
  */
 
-//Modal para Crear una tienda
 
+//! boton para poder activar modal y crear una nueva tienda
 $('#btn_CrearTienda').on('click', ()=>{
     $('#Modal_Principal').modal('show')
-    $('#tileModal').html(`Nueva tienda Domino´s`)
+    $('#tileModal').html(`Nueva tienda Camioncito`)
     $('#ModalBody').html(HTML_CrearTienda);
     $('#idcrearnuevatienda').css('display', 'block');
     $('#alertamensaje').css('display', 'block')
@@ -295,6 +222,8 @@ $('#btn_CrearTienda').on('click', ()=>{
     $('#idaplicarmodificaciones').css('display', 'none');
 });
 
+
+//! Boton que activa el modal para poder restaurar los recordatosios
 $('#btn_RestauracionRecordatorios').on('click',() => {
     $('#idaplicarmodificaciones').css('display', 'none');
     $('#Modal_Principal').modal('show')
@@ -308,8 +237,9 @@ $('#btn_RestauracionRecordatorios').on('click',() => {
     $('#idcrearnuevatienda').css('display', 'none');
 });
 
+//! Boton para poder actival el modal y porder actualizar horarios
 $('#btn_HorarioTiendas').on('click',() => {
-    const HorariosTiendas = JSON.parse(localStore.getItem('horario'))
+    const HorariosTiendas = JSON.parse(localStorage.getItem('horarios'))
     if($('#id_Tienda').val() != 0&& HorariosTiendas){
         $('#alertamensaje').css('display', 'none')
         $('#idrestaurarrecordatorios').css('display', 'none')
@@ -320,8 +250,8 @@ $('#btn_HorarioTiendas').on('click',() => {
         $('#idcancelaredicionhorarios').css('display', 'none');
         $('#ModalBody').html(HTML_HorariosTienda)
         $('#tileModal').html(`Horario de Tienda: ${HorariosTiendas[0].Codigo_Tienda}`)
-        $('#inputaperturalunes').val(HorariosTiendas[0].Monday.split('A')[0].trim())
-        $('#inputcierrelunes').val(HorariosTiendas[0].Monday.split('A')[1].trim())
+        $('#inputaperturalunes').val(HorariosTiendas[0].Mondey.split('A')[0].trim())
+        $('#inputcierrelunes').val(HorariosTiendas[0].Mondey.split('A')[1].trim())
         $('#inputaperturamartes').val(HorariosTiendas[0].Tuesday.split('A')[0].trim())
         $('#inputcierremartes').val(HorariosTiendas[0].Tuesday.split('A')[1].trim())
         $('#inputaperturamiercoles').val(HorariosTiendas[0].Wednesday.split('A')[0].trim())
@@ -340,6 +270,7 @@ $('#btn_HorarioTiendas').on('click',() => {
     }
 });
 
+//! Boton que activa el modal para poder actualizar tiempos en forma general
 $('#btn_ModificacionDeTiempos').on('click', () => {
     $('#ModalBody').html(HTML_ModificacionTiempos);
     $('#Modal_Principal').modal('show')
@@ -352,8 +283,7 @@ $('#btn_ModificacionDeTiempos').on('click', () => {
     $('#idcancelaredicionhorarios').css('display', 'none');
 })
 
-
-
+//! Boton para poder desactivar el disabled de los elementos para editar horarios
 $('#ideditarhorarios').on('click', () => {
     $('#ideditarhorarios').css('display', 'none');
     $('#alertamensaje').css('display', 'none')
@@ -375,11 +305,11 @@ $('#ideditarhorarios').on('click', () => {
     $('#inputcierredomingo').prop('disabled', false)
 })
 
+//! Boton para poder cancelar la actualizacion de los horaios de la tienda.
 $('#idcancelaredicionhorarios').on('click', () => {
     $('#ideditarhorarios').css('display', 'block');
     $('#idguardarcambioshorarios').css('display', 'none');
     $('#idcancelaredicionhorarios').css('display', 'none');
-
     $('#inputaperturalunes').prop('disabled', true)
     $('#inputcierrelunes').prop('disabled', true)
     $('#inputaperturamartes').prop('disabled', true)
@@ -397,11 +327,11 @@ $('#idcancelaredicionhorarios').on('click', () => {
 })
 
 /**
- *****************************
- *      Codigo de Modal     ** 
- *****************************
+ ** ****************************
+ **      Codigo de Modal     ** 
+ ** ****************************
  */
-//Guardar las modificaciones de horario de tienda
+//! Guardar las modificaciones de horario de tienda
 $('#idguardarcambioshorarios').on('click', ()=> {
     $.ajax({
         url: '/upd_HorariosTienda',
@@ -419,13 +349,21 @@ $('#idguardarcambioshorarios').on('click', ()=> {
             Usuario: $('#usuario').html()
         },
         success: (data)=>{
-                localStore.setItem('horario', JSON.stringify(data.Horario))
-                $('#Modal_Principal').modal('hide')
-                MN_VS_2(`Actializacion de Horarios: ${data.data.Tienda}`, 'bg-success', data.data.User +': ' + data.data.Motivo)
+            $('#Modal_Principal').modal('hide')
+            switch(Number(data.__error)){
+                case 0:
+                    localStorage.setItem('horarios', JSON.stringify(data.Horario))
+                    MN_VS_2(`Actializacion de Horarios: ${$('#id_Tienda').val()}`, 'bg-success', 'Se han guardado los cambios')
+                break;
+                case 1:
+                    MN_VS_2(`Error!!`, 'bg-danger', 'Error al conectarse a la base de datos')
+                break;
+            }
         }
     });
 });
 
+//! Restaura los valores de Tiempos a "Tiempos Normales" y el Motivo a vaciarlo
 $('#idrestaurarrecordatorios').on('click', () => {
     $.ajax({
         url: '/set_restaurarrecordatorios',
@@ -433,143 +371,127 @@ $('#idrestaurarrecordatorios').on('click', () => {
         timeout: 15000,
         success: (data) => {
             $('#Modal_Principal').modal('hide')
-            MN_VS_2('Se restauro en todas las tiendasx', 'bg-success', data.User +': '+ data.Motivo)
+            switch(Number(data.__error)){
+                case 1:
+                    MN_VS_2('Error!!', 'bg-danger','Error al conectarse la base de datos') 
+                break;
+                case 0:
+                    MN_VS_2('Exito', 'bg-success','Se ha actualizado los recordatorios') 
+                break;
+            }
         }
     })
 });
 
+//! Boton para descargar la bitacora en formato XLSX
 $('#btn_DescargaBitacora').on('click', () => {
     $.ajax({
         url: '/get_Recordatorios_Download',
         method: 'get',
         timeout: 1500,
         success: (data) => {
-            let htmltablebodyencabezado= ''
-            let htmltablebodyfaltante = ''
-            $(data.Encabezado).each((i,e) => {
-                htmltablebodyencabezado += `
-                <tr>
-                        <td>${e.Tienda}</td>
-                        <td>${e.Tiempo}</td>
-                        <td>${e.Motivo}</td>
-                        <td>${e.POS}</td>
-                        <td>${e.Comentario}</td>
-                        <td>${e.Impulsar}</td>
-                    </tr>
-                `
-            });
-            $(data.Faltante).each((i,e) => {
-                htmltablebodyfaltante += `
-                <tr>
-                    <td>${e.Tienda}</td>
-                    <td>${e.Categoria}</td>
-                    <td>${e.Item}</td>
-                    <td>${e.Estado}</td>
-                </tr>
-                `
-            });
-
-            $('#tbody_encabezado').html(htmltablebodyencabezado)
-            $('#tbody_faltante').html(htmltablebodyfaltante)
-
-            let encabezado = document.getElementById('tbl_encabezado_tienda')
-            let faltante = document.getElementById('tbl_Faltante_tienda')
-
-            let Datos = ConvertTableToXLSX_vs_2(encabezado, faltante, 'Recordatorios Dominos', 'Recordatorios Dominos');
-
-            DescargarXLSX('Recordatorios', Datos)
+            switch(Number(data.__error)) {
+                case 0:
+                    let htmltablebodyencabezado= ''
+                    $(data.Encabezado).each((i,e) => {
+                        htmltablebodyencabezado += `
+                        <tr>
+                            <td>${e.Tienda}</td>
+                            <td>${e.Tiempo}</td>
+                            <td>${e.Motivo}</td>
+                            <td>${e.POS}</td>
+                            <td>${e.Comentario}</td>
+                        </tr>
+                        `
+                    });
+                    $('#tbody_encabezado').html(htmltablebodyencabezado)
+                    let encabezado = document.getElementById('tbl_encabezado_tienda')
+                    let Datos = ConvertTableToXLSX(encabezado, 'Recordatorios Camioncito', 'Recordatorios Camioncito', 'Recordatorios Camioncito');
+                    DescargarXLSX('Recordatorios', Datos)
+                break;
+                case 1:
+                   MN_VS_2('Error!!', 'bg-danger', 'Error en la conexion en la base de datos')  
+                break;
+            }
         }
     })
 });
 
 $('#idcrearnuevatienda').on('click', () => {
-    $('#alertamensaje').html(' ')
-    $('#idtiendanueva').removeClass('border-danger');
-    $('#inputaperturalunes').removeClass('border-danger');
-    $('#inputcierrelunes').removeClass('border-danger');
-    $('#inputaperturamartes').removeClass('border-danger');
-    $('#inputcierremartes').removeClass('border-danger');
-    $('#inputaperturamiercoles').removeClass('border-danger');
-    $('#inputcierremiercoles').removeClass('border-danger');
-    $('#inputaperturajueves').removeClass('border-danger');
-    $('#inputcierrejueves').removeClass('border-danger');
-    $('#inputaperturaviernes').removeClass('border-danger');
-    $('#inputcierreviernes').removeClass('border-danger');
-    $('#inputaperturasabado').removeClass('border-danger');
-    $('#inputcierresabado').removeClass('border-danger');
-    $('#inputcierredomingo').removeClass('border-danger');
-    $('#inputaperturadomingo').removeClass('border-danger');
-    if($('#idtiendanueva').val() != 0 && $('#inputaperturalunes').val() && $('#inputcierrelunes').val() 
-        && $('#inputaperturamartes').val() && $('#inputcierremartes').val() && $('#inputaperturamiercoles').val()
-        && $('#inputcierremiercoles').val() && $('#inputaperturajueves').val() && $('#inputcierrejueves').val() 
-        && $('#inputaperturaviernes').val() && $('#inputcierreviernes').val() && $('#inputaperturasabado').val() 
+    if($('#inp_CodigoTienda').val() && $('#inp_NombreTienda').val() && $('#inputaperturalunes').val() && $('#inputcierrelunes').val()  && $('#inputaperturamartes').val() && $('#inputcierremartes').val() && $('#inputaperturamiercoles').val()
+        && $('#inputcierremiercoles').val() && $('#inputaperturajueves').val() && $('#inputcierrejueves').val()  && $('#inputaperturaviernes').val() && $('#inputcierreviernes').val() && $('#inputaperturasabado').val() 
         && $('#inputcierresabado').val() && $('#inputaperturadomingo').val() && $('#inputcierredomingo').val()){
             $.ajax({
                 url: '/ins_nuevatienda',
                 timeout: 15000,
                 method: 'post',
                 data: {
-                    Tienda: $('#idtiendanueva').val(),
-                    Lunes: $('#inputaperturalunes').val() + ' A ' + $('#inputcierrelunes').val(),
-                    Martes: $('#inputaperturamartes').val() + ' A ' + $('#inputcierremartes').val(),
-                    Miercoles: $('#inputaperturamiercoles').val() + ' A ' + $('#inputcierremiercoles').val(),
-                    Jueves: $('#inputaperturajueves').val() + ' A ' + $('#inputcierrejueves').val(),
-                    Viernes: $('#inputaperturaviernes').val() + ' A ' + $('#inputcierreviernes').val(),
-                    Sabado: $('#inputaperturasabado').val() + ' A ' + $('#inputcierresabado').val(),
-                    Domingo: $('#inputaperturadomingo').val() + ' A ' + $('#inputcierredomingo').val()
+                    NombreTienda: $('#inp_NombreTienda').val().trim(),
+                    CodigoTienda: $('#inp_CodigoTienda').val().trim(),
+                    Lunes: $('#inputaperturalunes').val().trim() + ' A ' + $('#inputcierrelunes').val().trim(),
+                    Martes: $('#inputaperturamartes').val().trim() + ' A ' + $('#inputcierremartes').val().trim(),
+                    Miercoles: $('#inputaperturamiercoles').val().trim() + ' A ' + $('#inputcierremiercoles').val().trim(),
+                    Jueves: $('#inputaperturajueves').val().trim() + ' A ' + $('#inputcierrejueves').val().trim(),
+                    Viernes: $('#inputaperturaviernes').val().trim() + ' A ' + $('#inputcierreviernes').val().trim(),
+                    Sabado: $('#inputaperturasabado').val().trim() + ' A ' + $('#inputcierresabado').val().trim(),
+                    Domingo: $('#inputaperturadomingo').val().trim() + ' A ' + $('#inputcierredomingo').val().trim()
                 },
                 success: (data) => {
-                    $('#Modal_Principal').modal('hide')
-                    MN_VS_2(`Nueva Tienda ${data.Codigo_Tienda}`, 'bg-success', `Nueva tienda agregada: ${data.Tienda}`)
+                    switch(Number(data.__error)){
+                        case 0:
+                             MN_VS_2('Nueva tienda', 'bg-success', 'Se a creado una nueva tienda');
+                             $('#Modal_Principal').modal('hide')
+                        break;
+                        case 1:
+                            MN_VS_2('Error!!', 'bg-danger', 'Problemas con la conexion a la base datos'); 
+                        break;
+                        case 2: 
+                            MN_VS_2('Problema!!', 'bg-warning', 'El codigo de tienda ya existe');
+                            $('#inp_CodigoTienda').addClass('border-danger');
+                            setTimeout(() => {
+                                $('#inp_CodigoTienda').removeClass('border-danger')
+                            }, 3000);
+                        break;
+                    }
                 }
             });
     }else{
-        $('#alertamensaje').html('Aun tienes campos pendientes a llenar!!')
-        if($('#idtiendanueva').val() == 0){
-            $('#idtiendanueva').addClass('border-danger');
-        }
-        if(!$('#inputaperturalunes').val()){
-            $('#inputaperturalunes').addClass('border-danger');
-        }
-        if(!$('#inputaperturamartes').val()){
-            $('#inputaperturamartes').addClass('border-danger');
-        }
-        if(!$('#inputcierremartes').val()){
-            $('#inputcierremartes').addClass('border-danger');
-        }
-        if(!$('#inputaperturamiercoles').val()){
-            $('#inputaperturamiercoles').addClass('border-danger');
-        }
-        if(!$('#inputcierremiercoles').val()){
-            $('#inputcierremiercoles').addClass('border-danger');
-        }
-        if(!$('#inputaperturajueves').val()){
-            $('#inputaperturajueves').addClass('border-danger');
-        }
-        if(!$('#inputcierrejueves').val()){
-            $('#inputcierrejueves').addClass('border-danger');
-        }
-        if(!$('#inputaperturaviernes').val()){
-            $('#inputaperturaviernes').addClass('border-danger');
-        }
-        if(!$('#inputcierreviernes').val()){
-            $('#inputcierreviernes').addClass('border-danger');
-        }
-        if(!$('#inputaperturasabado').val()){
-            $('#inputaperturasabado').addClass('border-danger');
-        }
-        if(!$('#inputcierresabado').val()){
-            $('#inputcierresabado').addClass('border-danger');
-        }
-        if(!$('#inputaperturadomingo').val()){
-            $('#inputaperturadomingo').addClass('border-danger');
-        }
-        if(!$('#inputcierredomingo').val()){
-            $('#inputcierredomingo').addClass('border-danger');
-        }
-        if(!$('#inputcierrelunes').val()){
-            $('#inputcierrelunes').addClass('border-danger');
-        }
+        $('#alertamensaje').html('Aun tienes campos pendientes de llenar!!')
+        $('#inp_CodigoTienda').addClass($('#inp_CodigoTienda').val() === '' ? 'border-danger': '' );
+        $('#inp_NombreTienda').addClass($('#inp_NombreTienda').val() === '' ? 'border-danger': '' );
+        $('#inputaperturalunes').addClass($('#inputaperturalunes').val() === '' ? 'border-danger': '' );
+        $('#inputcierrelunes').addClass($('#inputcierrelunes').val() === '' ? 'border-danger': '' );
+        $('#inputaperturamartes').addClass($('#inputaperturamartes').val() === '' ? 'border-danger': '' );
+        $('#inputcierremartes').addClass($('#inputcierremartes').val() === '' ? 'border-danger': '' );
+        $('#inputaperturamiercoles').addClass($('#inputaperturamiercoles').val() === '' ? 'border-danger': '' );
+        $('#inputcierremiercoles').addClass($('#inputcierremiercoles').val() === '' ? 'border-danger': '' );
+        $('#inputaperturajueves').addClass($('#inputaperturajueves').val() === '' ? 'border-danger': '' );
+        $('#inputcierrejueves').addClass($('#inputcierrejueves').val() === '' ? 'border-danger': '' );
+        $('#inputaperturaviernes').addClass($('#inputaperturaviernes').val() === '' ? 'border-danger': '' );
+        $('#inputcierreviernes').addClass($('#inputcierreviernes').val() === '' ? 'border-danger': '' );
+        $('#inputaperturasabado').addClass($('#inputaperturasabado').val() === '' ? 'border-danger': '' );
+        $('#inputcierresabado').addClass($('#inputcierresabado').val() === '' ? 'border-danger': '' );
+        $('#inputaperturadomingo').addClass($('#inputaperturadomingo').val() === '' ? 'border-danger': '' );
+        $('#inputcierredomingo').addClass($('#inputcierredomingo').val() === '' ? 'border-danger': '' );
+        setTimeout(() => {
+            $('#alertamensaje').html('')
+            $('#inp_CodigoTienda').removeClass('border-danger');
+            $('#inp_NombreTienda').removeClass('border-danger');
+            $('#inputaperturalunes').removeClass('border-danger');
+            $('#inputcierrelunes').removeClass('border-danger');
+            $('#inputaperturamartes').removeClass('border-danger');
+            $('#inputcierremartes').removeClass('border-danger');
+            $('#inputaperturamiercoles').removeClass('border-danger');
+            $('#inputcierremiercoles').removeClass('border-danger');
+            $('#inputaperturajueves').removeClass('border-danger');
+            $('#inputcierrejueves').removeClass('border-danger');
+            $('#inputaperturaviernes').removeClass('border-danger');
+            $('#inputcierreviernes').removeClass('border-danger');
+            $('#inputaperturasabado').removeClass('border-danger');
+            $('#inputcierresabado').removeClass('border-danger');
+            $('#inputaperturadomingo').removeClass('border-danger');
+            $('#inputcierredomingo').removeClass('border-danger');
+        }, 3000);
     }
 });
 
@@ -586,10 +508,16 @@ $('#idaplicarmodificaciones').on('click', () => {
             },
             success: (data) => {
                 $('#Modal_Principal').modal('hide')
-                MN_VS_2(`Has modificado Tiempos y Motivos`, 'bg-success', `${data.Usuario} has cambiado tiempo: ${data.Tiempo} y Motivo: ${data.Motivo}`)
+                switch(Number(data.__error)){
+                    case 0:
+                        MN_VS_2('Exito', 'bg-success', 'Se han Actualizado los tiempos y motivos de las tiendas') 
+                    break;
+                    case 1: 
+                        MN_VS_2('Error!!', 'bg-danger', 'Error al conectarse a la base de datos')
+                    break;
+                }
             }
         }).fail((err) =>{
-            console.log(err);
             $('#Modal_Principal').modal('hide')
             MN_VS_2('Error de Conexion', 'bg-danger', 'Error de conexion a la base de datos')
         });

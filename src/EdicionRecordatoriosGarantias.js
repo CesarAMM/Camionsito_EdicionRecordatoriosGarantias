@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const bodyParser = require('body-parser');
 const helmet = require('helmet')
-const port = process.env.PORT || 8011;
+const port = process.env.PORT || 8080;
 const fileUpload = require('express-fileupload');
 const {expressCspHeader, INLINE, NONE, SELF} = require('express-csp-header')
 
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(cookieSession ({
-    name: 'SessionDominosReGa',
+    name: '535510NC4M10NC170',
     keys: ['key1', 'key2']
 }));
 app.use(helmet());
