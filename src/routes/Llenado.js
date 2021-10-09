@@ -8,6 +8,7 @@ app.get('/Llenado', (req, res) => {
         res.render('Llenado.html', {
             title: 'Llenado - Dominos',
             page: 'Llenado',
+            IdPage: 'Llenado',
             user: req.session.user,
             rol: req.session.rol
         });
@@ -25,72 +26,54 @@ app.get('/getTiendas', async (req, res) => {
 })
 
 
-app.post('/CargaDatos_Step_1', async (req, res) => {
-    let {Base} = req.body
-    let not_id = 0, yes_id =0;
-    let pool = await new sql.ConnectionPool(config.db_CreC).connect();
-    let data;
-    for(let i = 0; i < Base.length; i++){
-        if(Base[i].Id != ''){
-            data = await pool.request()
-                .input('id', sql.Int, Base[i].Id)
-                .input('tienda', sql.NVarChar, Base[i].Tienda)
-                .input('departamento', sql.NVarChar, Base[i].Departamento)
-                .input('zonamunicipio', sql.NVarChar, Base[i].ZonaMunicipio)
-                .input('rango', sql.NVarChar, Base[i].Rango)
-                .input('palabraclave', sql.NVarChar, Base[i].PalabraClave)
-                .input('calleminima', sql.Int, Base[i].CalleMinima)
-                .input('callemaxima', sql.Int, Base[i].CalleMaxima)
-                .input('avenidaminima', sql.Int, Base[i].AvenidaMinima)
-                .input('avenidamaxima', sql.Int, Base[i].AvenidaMaxima)
-                .input('kilometrominimo', sql.Float, parseFloat(Base[i].KilometroMinimo))
-                .input('kilometromaximo', sql.Float, parseFloat(Base[i].KilometroMaximo))
-                .input('minimo', sql.NVarChar, Base[i].Minimo)
-                .input('garantia', sql.NVarChar, Base[i].Garantia)
-                .input('tiempo', sql.NVarChar, Base[i].Tiempo)
-                .input('horalimite', sql.NVarChar, Base[i].HoraLimite)
-                .input('comentario', sql.NVarChar, Base[i].Comentarios)
-                .input('servicio', sql.NVarChar, Base[i].Servicio)
-                .execute('SP_Dominos_UPD_Garantias')
-            yes_id++;
-        }else{
-            data = await pool.request()
-                .input('tienda', sql.NVarChar, Base[i].Tienda)
-                .input('departamento', sql.NVarChar, Base[i].Departamento)
-                .input('zonamunicipio', sql.NVarChar, Base[i].ZonaMunicipio)
-                .input('rango', sql.NVarChar, Base[i].Rango)
-                .input('palabraclave', sql.NVarChar, Base[i].PalabraClave)
-                .input('calleminima', sql.Int, Base[i].CalleMinima)
-                .input('callemaxima', sql.Int, Base[i].CalleMaxima)
-                .input('avenidaminima', sql.Int, Base[i].AvenidaMinima)
-                .input('avenidamaxima', sql.Int, Base[i].AvenidaMaxima)
-                .input('kilometrominimo', sql.Float, parseFloat(Base[i].KilometroMinimo))
-                .input('kilomeromaximo', sql.Float, parseFloat(Base[i].KilometroMaximo))
-                .input('minimo', sql.NVarChar, Base[i].Minimo)
-                .input('garantia', sql.NVarChar, Base[i].Garantia)
-                .input('tiempo', sql.NVarChar, Base[i].Tiempo)
-                .input('horalimite', sql.NVarChar, Base[i].HoraLimite)
-                .input('comentario', sql.NVarChar, Base[i].Comentarios)
-                .input('servicio', sql.NVarChar, Base[i].Servicio)
-                .execute('SP_Dominos_INS_Garantias')
-            not_id++;
+app.post('/CargaSectorizacionCamioncito', async (req, res) => {
+    let {DataSet} = req.body
+    try {
+        let auxNew = 0, auxUpd = 0;
+        let pool = await new sql.ConnectionPool(config.db_Camioncito).connect();
+        for (let index = 0; index < DataSet.length; index++) {
+            const elemento = DataSet[index];
+            Number(elemento.Id) === 0 ? auxNew++ : auxUpd++;
+            let data = await pool.request()
+                .input('Id', sql.Int, elemento.Id)
+                .input('Tienda', sql.NVarChar, elemento.Tienda)
+                .input('Departamento', sql.NVarChar, elemento.Departamento)
+                .input('Zona_Municipio', sql.NVarChar, elemento.Zona_Municipio)
+                .input('Rango', sql.NVarChar, elemento.Rango)
+                .input('Palabra_Clave', sql.NVarChar, elemento.Palabra_Clave)
+                .input('Calle_Minima', sql.Int, elemento.Calle_Minima)
+                .input('Calle_Maxima', sql.Int, elemento.Calle_Maxima)
+                .input('Avenida_Minima', sql.Int, elemento.Avenida_Minima)
+                .input('Avenida_Maxima', sql.Int, elemento.Avenida_Maxima)
+                .input('Kilometro_Minimo', sql.Decimal, elemento.Kilometro_Minimo)
+                .input('Kilometro_Maximo', sql.Decimal, elemento.Kilometro_Maximo)
+                .input('Minimo', sql.NVarChar, elemento.Minimo)
+                .input('Garantia', sql.NVarChar, elemento.Garantia)
+                .input('Tiempo', sql.NVarChar, elemento.Tiempo)
+                .input('Hora_Limite', sql.NVarChar, elemento.Hora_Limite)
+                .input('Comentario', sql.NVarChar, elemento.Comentario)
+                .input('Servicio', sql.NVarChar, elemento.Servicio)
+                .execute('Sp_Camioncito_ins_upd_Sectorizacion') 
         }
+        await pool.close();
+        res.json({ __error: 0, Nuevo: auxNew, Actualizacion: auxUpd })
+    } catch (error) {
+        res.json({ __error: 1, msgError: error })
     }
-    await pool.close();
-    res.json({
-        yes: yes_id,
-        not: not_id
-    })
-});
+})
 
 app.post('/ObtenerSectorizacionPortienda', async (req, res) => {
     let {Tienda} = req.body;
-    let pool = await new sql.ConnectionPool(config.db_CreC).connect();
-    let data = await pool.request()
-        .input('tienda', sql.NVarChar, Tienda)
-        .execute('SP_Dominos_SEL_Sectorizacion')
-    await pool.close();
-    res.json(data.recordset)
+    try {
+        let pool = await new sql.ConnectionPool(config.db_Camioncito).connect();
+        let data = await pool.request()
+            .input('tienda', sql.NVarChar, Tienda)
+            .execute('Sp_Camioncito_sel_Sectorizacion_Tienda')
+        await pool.close();
+        res.json({__error: 0, Datos: data.recordset})
+    } catch (error) {
+        res.json({__error: 1})
+    }
 })
 
 

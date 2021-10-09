@@ -513,7 +513,7 @@ $('#idaplicarmodificaciones').on('click', () => {
                         MN_VS_2('Exito', 'bg-success', 'Se han Actualizado los tiempos y motivos de las tiendas') 
                     break;
                     case 1: 
-                        MN_VS_2('Error!!', 'bg-danger', 'Error al conectarse a la base de datos')
+                        MN_VS_2('Error!!', 'bg-danger', 'Error al conectarse a la base de datos.')
                     break;
                 }
             }
