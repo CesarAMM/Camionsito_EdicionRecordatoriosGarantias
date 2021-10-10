@@ -37,3 +37,7 @@
 .bg-gris{
   background: #E5E5E5;
 }
+
+.border-orange {
+  border-color: #fd7a2e !important;
+}

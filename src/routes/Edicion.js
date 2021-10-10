@@ -8,6 +8,7 @@ app.get('/Edicion', (req, res) => {
         res.render('Edicion.html', {
             title: 'Edicion - Dominos',
                 page: 'Modificación',
+                IdPage: 'Modificacion',
                 user: req.session.user,
                 rol: req.session.rol
         });
@@ -37,15 +38,15 @@ app.post('/get_datasectorizacionedicion', async (req, res) => {
         sqlkilometro = ``
     }
     let tex_sql=`
-        SELECT * FROM [TB.Dominos.Garantias.BaseMatriz] WHERE 
-        Palabra_Clave  in (SELECT Palabra_Clave FROM [TB.Dominos.Garantias.BaseMatriz] WHERE Palabra_Clave LIKE '%'+'${palabraclave}'+'%') and
-        Departamento in (SELECT Departamento FROM [TB.Dominos.Garantias.BaseMatriz] WHERE Departamento LIKE '%'+'${departamento}'+'%') and
-        Zona_Municipio IN (SELECT Zona_Municipio FROM [TB.Dominos.Garantias.BaseMatriz] WHERE Zona_Municipio LIKE '%'+'${zonamunicipio}'+'%')
+        SELECT * FROM [TB_Camioncito_Garantias_BaseMatriz] WHERE 
+        Palabra_Clave  in (SELECT Palabra_Clave FROM [TB_Camioncito_Garantias_BaseMatriz] WHERE Palabra_Clave LIKE '%'+'${palabraclave}'+'%') and
+        Departamento in (SELECT Departamento FROM [TB_Camioncito_Garantias_BaseMatriz] WHERE Departamento LIKE '%'+'${departamento}'+'%') and
+        Zona_Municipio IN (SELECT Zona_Municipio FROM [TB_Camioncito_Garantias_BaseMatriz] WHERE Zona_Municipio LIKE '%'+'${zonamunicipio}'+'%')
         ${sqlcalle}
         ${sqlave}
         ${sqlkilometro}
     `
-    let pool = await new sql.ConnectionPool(config.db_CreC).connect();
+    let pool = await new sql.ConnectionPool(config.db_Camioncito).connect();
     let data = await pool.request()
         .query(tex_sql)
     await pool.close();
@@ -53,80 +54,73 @@ app.post('/get_datasectorizacionedicion', async (req, res) => {
 });
 
 app.post('/upd_sectorizacion_modificacion', async (req, res) => {
-    let { 
-        Id, tienda, departamento, zonamunicipio, palabraclave, rango, calleminima, callemaxima, avenidaminima,
-        avenidamaxima, kilometrominimo, kilometromaximo, minimo, garantia, horalimite, tiempo, comentario, servicio
-    } = req.body;
-    console.log(req.body)
-    let pool = await new sql.ConnectionPool(config.db_CreC).connect()
-    let data = await pool.request()
-        .input('id', sql.Int, Id)
-        .input('tienda', sql.NVarChar, tienda)
-        .input('departamento', sql.NVarChar, departamento)
-        .input('zona_municipio', sql.NVarChar, zonamunicipio)
-        .input('palabra_clave', sql.NVarChar, palabraclave)
-        .input('rango', sql.NVarChar, rango)
-        .input('calle_minima', sql.Int, calleminima)
-        .input('calle_maxima', sql.Int, callemaxima)
-        .input('avenida_Minima', sql.Int, avenidaminima)
-        .input('avenida_Maxima', sql.Int, avenidamaxima)
-        .input('kilometro_Minimo', sql.Float, kilometrominimo)
-        .input('kilometro_Maximo', sql.Float, kilometromaximo)
-        .input('minimo', sql.NVarChar, minimo)
-        .input('garantia', sql.NVarChar, garantia)
-        .input('hora_Limite', sql.NVarChar, horalimite)
-        .input('tiempo', sql.NVarChar, tiempo)
-        .input('comentarios', sql.NVarChar, comentario)
-        .input('Servicio', sql.NVarChar, servicio)
-        .execute('SP_INS_Dominos_Garantias_Alterar');
-    await pool.close();
-    if(data.rowsAffected > 0){
+    let {  Id, tienda, departamento, zonamunicipio, palabraclave, rango, calleminima, callemaxima, avenidaminima,
+        avenidamaxima, kilometrominimo, kilometromaximo, minimo, garantia, horalimite, tiempo, comentario, servicio } = req.body;
+    try {
+        let pool = await new sql.ConnectionPool(config.db_Camioncito).connect()
+        let data = await pool.request()
+            .input('id', sql.Int, Id)
+            .input('tienda', sql.NVarChar, tienda)
+            .input('departamento', sql.NVarChar, departamento)
+            .input('zona_municipio', sql.NVarChar, zonamunicipio)
+            .input('palabra_clave', sql.NVarChar, palabraclave)
+            .input('rango', sql.NVarChar, rango)
+            .input('calle_minima', sql.Int, calleminima ? calleminima : 0)
+            .input('calle_maxima', sql.Int, callemaxima ? callemaxima : 0)
+            .input('avenida_minima', sql.Int, avenidaminima ? avenidaminima : 0)
+            .input('avenida_maxima', sql.Int, avenidamaxima ? avenidamaxima : 0)
+            .input('kilometro_minimo', sql.Decimal(5,2), kilometrominimo ? kilometrominimo.replace(",", ".") : 0)
+            .input('kilometro_maximo', sql.Decimal(5,2), kilometromaximo ? kilometromaximo.replace(",", ".") : 0)
+            .input('minimo', sql.NVarChar, minimo)
+            .input('garantia', sql.NVarChar, garantia)
+            .input('hora_limite', sql.NVarChar, horalimite)
+            .input('tiempo', sql.NVarChar, tiempo)
+            .input('comentarios', sql.NVarChar, comentario)
+            .input('servicio', sql.NVarChar, servicio)
+            .execute('Sp_Camioncito_upd_Sectorizacion');
+        await pool.close();
         res.json({
-            Titulo: 'Exito!!',
-            color: 'bg-success',
-            msj: `${req.session.user} has modificado id: ${Id} Tienda: ${tienda}`
+            __error: data.rowsAffected[0] === 0 ? 2 : 0,
+            data: data.recordsets[0][0]
         })
-    }else{
-        res.json({
-            Titulo: 'Error!!',
-            color: 'bg-danger',
-            msj: `${req.session.user} no se a logrado hacer la modificacion`
-        })
+    } catch (error) {
+        console.log(error);
+        res.json({ __error: 1 })
     }
 })
 
 app.post('/ins_nuevasectorizacion_uno', async (req, res) => {
-    let {
-        tienda, departamento, zonamunicipio, palabraclave, rango, calleminima, callemaxima, avenidaminima,
-        avenidamaxima, kilometrominimo, kilometromaximo, minimo, garantia, horalimite, tiempo, comentario, servicio
-    } = req.body
-    console.log(req.body)
-    let pool = await new sql.ConnectionPool(config.db_CreC).connect()
-    let data = await pool.request()
-        .input('tienda', sql.NVarChar, tienda)
-        .input('departamento', sql.NVarChar, departamento)
-        .input('zona_municipio', sql.NVarChar, zonamunicipio)
-        .input('palabra_clave', sql.NVarChar, palabraclave)
-        .input('rango', sql.NVarChar, rango)
-        .input('calle_minima', sql.Int, calleminima)
-        .input('calle_maxima', sql.Int, callemaxima)
-        .input('avenida_Minima', sql.Int, avenidaminima)
-        .input('avenida_Maxima', sql.Int, avenidamaxima)
-        .input('kilometro_Minimo', sql.Float, kilometrominimo)
-        .input('kilometro_Maximo', sql.Float, kilometromaximo)
-        .input('minimo', sql.NVarChar, minimo)
-        .input('garantia', sql.NVarChar, garantia)
-        .input('hora_Limite', sql.NVarChar, horalimite)
-        .input('tiempo', sql.NVarChar, tiempo)
-        .input('comentarios', sql.NVarChar, comentario)
-        .input('Servicio', sql.NVarChar, servicio)
-        .execute('SP_Dominos_INS_Nueva_Sectorizacion');
-    await pool.close();
-    res.json({
-        Titulo: 'Registro con exito',
-        color: 'bg-success',
-        msj: `${req.session.user} has registrado una nueva sectorización con Id: ${data.recordset[0].id} en tienda: ${data.recordset[0].tienda}`
-    })    
+    let {tienda, departamento, zonamunicipio, palabraclave, rango, calleminima, callemaxima, avenidaminima,
+        avenidamaxima, kilometrominimo, kilometromaximo, minimo, garantia, horalimite, tiempo, comentario, servicio} = req.body
+    try {
+        let pool = await new sql.ConnectionPool(config.db_Camioncito).connect()
+        let data = await pool.request()
+            .input('tienda', sql.NVarChar, tienda)
+            .input('departamento', sql.NVarChar, departamento)
+            .input('zona_municipio', sql.NVarChar, zonamunicipio)
+            .input('palabra_clave', sql.NVarChar, palabraclave)
+            .input('rango', sql.NVarChar, rango)
+            .input('calle_minima', sql.Int, calleminima ? calleminima : 0)
+            .input('calle_maxima', sql.Int, callemaxima ? callemaxima : 0)
+            .input('avenida_Minima', sql.Int, avenidaminima ? avenidaminima: 0)
+            .input('avenida_Maxima', sql.Int, avenidamaxima ? avenidamaxima: 0)
+            .input('kilometro_Minimo', sql.Decimal(5,2), kilometrominimo ? kilometrominimo.replace(",", ".") : 0)
+            .input('kilometro_Maximo', sql.Decimal(5,2), kilometromaximo ? kilometromaximo.replace(",", ".") : 0)
+            .input('minimo', sql.NVarChar, minimo)
+            .input('garantia', sql.NVarChar, garantia)
+            .input('hora_Limite', sql.NVarChar, horalimite)
+            .input('tiempo', sql.NVarChar, tiempo)
+            .input('comentarios', sql.NVarChar, comentario)
+            .input('Servicio', sql.NVarChar, servicio)
+            .execute('Sp_Camioncito_ins_NuevaSectorizacion');
+        await pool.close();
+        res.json({ 
+            __error: data.rowsAffected[0] === 1 ? 0 : 2,
+            datos: data.rowsAffected[0] === 1 ? data.recordsets[0][0] : 0
+         })
+    } catch (error) {
+        res.json({ __error: 1 })
+    }    
 })
 
 module.exports = app;

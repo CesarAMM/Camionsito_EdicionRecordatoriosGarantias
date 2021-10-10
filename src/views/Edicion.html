@@ -5,6 +5,7 @@
 </head>
 <body class="bg-light">
     <%-include('parts/navbar.html')%>
+    <br>
     <main class="container pt-5">
         <div class="row pt-4">
             <div class="col-6">
@@ -46,27 +47,18 @@
     </main>
     <br>
     <div class="container-fluid">
-        <table class="table table-striped table-hover">
-            <thead class="table bg-dark text-center text-white table-sm">
+        <table class="table table-striped table-hover table-sm table-bordered">
+            <thead class="table bg-navbar text-center">
                 <tr>
-                    <th scope="col" style="display: none;">Id</th>
                     <th scope="col" >Tienda</th>
                     <th scope="col">Departamento</th>
                     <th scope="col">Zona o Municipio</th>
                     <th scope="col">Rango</th>
-                    <th scope="col" style="display: none;">Palabra Clave</th>
-                    <th scope="col" style="display: none;">Calle Minima</th>
-                    <th scope="col" style="display: none;">Calle Maxima</th>
-                    <th scope="col" style="display: none;">Avenida Minima</th>
-                    <th scope="col" style="display: none;">Avenida Maxima</th>
-                    <th scope="col" style="display: none;">Kilometro Minimo</th>
-                    <th scope="col" style="display: none;">Kilometro Maximo</th>
                     <th scope="col">Minimo</th>
                     <th scope="col">Garantia</th>
                     <th scope="col">Tiempo</th>
                     <th scope="col">Hora Limite</th>
                     <th scope="col">Comentarios</th>
-                    <th scope="col" style="display: none;">Sector sin Servicio</th>
                 </tr>
             </thead>
             <tbody id="tbl_body"></tbody>

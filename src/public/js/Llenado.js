@@ -157,7 +157,7 @@ $('#btnDescarga').on('click', ()=> {
     if($('#getTienda').val()){
         let data = document.getElementById('TablaGeneral');
         let Datos = ConvertTableToXLSX(data, 'Reporte', 'Reporte_2', 'Reporte_3');
-        DescargarXLSX('Sectorizacion', Datos)
+        DescargarXLSX($('#getTienda').find(`option[value="${$('#getTienda').val()}"]`).html(), Datos)
     }else{
         MN_VS_2('Error!!', 'bg-danger', 'Seleccione una tienda')
     }

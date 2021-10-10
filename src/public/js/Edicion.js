@@ -1,3 +1,4 @@
+
 $('#btn_Buscar').on('click', () => {
     if($('#getpalabraclave').val() || $('#getcalle').val() || $('#getavenida').val() || $('#getkilometro').val() ||
             $('#getdepartamento').val() || $('#getzonamunicipio').val()){
@@ -28,8 +29,8 @@ $('#btn_Buscar').on('click', () => {
                         $('#tbl_body').html(' ')
                         $(data).each((i, e) => {
                             $('#tbl_body').append(`
-                            <tr class="" id="${e.ID}" onclick="verdetalledireccion(this.id)">
-                                <td class="class_id" style="display: none;">${e.ID}</td>
+                            <tr class="" id="${e.Id}" onclick="verdetalledireccion(this.id)">
+                                <td class="class_id" style="display: none;">${e.Id}</td>
                                 <td class="class_Tienda">${e.Tienda}</td>
                                 <td class="class_Departamento">${e.Departamento}</td>
                                 <td class="class_zonamunicipio">${e.Zona_Municipio}</td>
@@ -45,7 +46,7 @@ $('#btn_Buscar').on('click', () => {
                                 <td class="class_garantia">${e.Garantia}</td>
                                 <td class="class_tiempo">${e.Tiempo}</td>
                                 <td class="class_horalimite">${e.Hora_Limite}</td>
-                                <td class="class_comentario">${e.Comentarios}</td>
+                                <td class="class_comentario">${e.Cometario}</td>
                                 <td class="class_serviio" style="display: none;">${e.Sector_Sin_Servicio}</td>
                             </tr>
                             `)
@@ -57,6 +58,10 @@ $('#btn_Buscar').on('click', () => {
     }
 });
 
+
+$('#btn_Buscar').on('click', () => {
+
+})
 function verdetalledireccion(id) {
     $('#bodalbody').html(HTML_Edicion)
     $('#exampleModal').modal('show')
@@ -172,7 +177,17 @@ $('#btnguardarmodificaciones').on('click', () => {
                 },
                 success: (data) => {
                     $('#exampleModal').modal('hide')
-                    MN_VS_2(data.Titulo, data.color, data.msj)
+                    switch(Number(data.__error)){
+                        case 1:
+                            MN_VS_2('Error!!', 'bg-danger', 'Error al conectarse a la base de datos')
+                            break;
+                        case 2:
+                            MN_VS_2('Error!!', 'bg-warning', 'No se encontro el ID de la sectorización a modificar')
+                            break;
+                        case 0:
+                            MN_VS_2('Actualizado', 'bg-success', `Se actualizo la sectorización: ${$('#btnguardarmodificaciones').val()}`)
+                            break;
+                    }
                 }
             });
     }else{
@@ -214,16 +229,9 @@ $('#btn_registrar_1').on('click', () => {
     $('#btnguardarmodificaciones').css('display', 'none')
     $('#exampleModalLabel').html(`Registrar una nueva sectorización`)
     $('#bodalbody').html(HTML_Registrar_1)
-    $.ajax({
-        url: '/get_page_recordatorios',
-        timeout: 15000,
-        method: 'get',
-        success: (data)=>{
-            $('#input_tienda').append(`<option value="0">-- Seleccione una Tienda --</option> `);
-            $(data.Tiendas).each((i,e)=>{
-                $('#selectTienda').append(`<option value="${e.Codigo_Tienda}">${e.Tienda}</option>`);
-            })
-        }
+    $('#selectTienda').append(`<option value="0">-- Seleccione una Tienda --</option> `);
+    $(JSON.parse(localStorage.getItem('Tiendas'))).each((i,e)=>{
+        $('#selectTienda').append(`<option value="${e.CodigoTienda}">${e.CodigoTienda} ${e.Tienda}</option>`);
     })
 });
 
@@ -232,55 +240,24 @@ $('#btnregistraruno').on('click', () => {
     $('#input_departamento').removeClass('border-danger')
     $('#input_zonamunicipio').removeClass('border-danger')
     $('#input_palabraclave').removeClass('border-danger')
-    if($('#selectTienda').val() && $('#input_departamento').val() && $('#input_zonamunicipio').val() &&
+    if($('#selectTienda').val() != 0 && $('#input_departamento').val() && $('#input_zonamunicipio').val() &&
         $('#input_palabraclave').val() && $('#input_rango').val()){
-            let calleminima, callemaxima,avenidaminima, avenidamaxima,kilometrominimo, kilometromaximo
-            if($('#input_calleminima').val()){
-                calleminima = $('#input_calleminima').val()
-            }else {
-                calleminima = 0
-            }
-            if($('#input_callemaxima').val()){
-                callemaxima = $('#input_callemaxima').val()
-            }else {
-                callemaxima = 0
-            }
-            if($('#input_avenidaminima').val()){
-                avenidaminima = $('#input_avenidaminima').val()
-            }else {
-                avenidaminima = 0
-            }
-            if($('#input_avenidamaxima').val()){
-                avenidamaxima = $('#input_avenidamaxima').val()
-            }else {
-                avenidamaxima = 0
-            }
-            if($('#input_kilometrominimo').val()){
-                kilometrominimo = $('#input_kilometrominimo').val()
-            }else {
-                kilometrominimo =0
-            }
-            if($('#input_kilometromaximo').val()){
-                kilometromaximo = $('#input_kilometromaximo').val()
-            }else {
-                kilometromaximo = 0
-            }
             $.ajax({
                 url: '/ins_nuevasectorizacion_uno',
                 timeout: 15000,
                 method: 'POST',
                 data: {
-                    tienda: $('#selectTienda').val(),
+                    tienda: $('#selectTienda').find(`option[value="${$('#selectTienda').val()}"]`).html(),
                     departamento: $('#input_departamento').val(),
                     zonamunicipio: $('#input_zonamunicipio').val(),
                     palabraclave: $('#input_palabraclave').val(),
                     rango: $('#input_rango').val(),
-                    calleminima: calleminima,
-                    callemaxima: callemaxima,
-                    avenidaminima: avenidaminima,
-                    avenidamaxima: avenidamaxima,
-                    kilometrominimo: parseFloat(kilometrominimo),
-                    kilometromaximo: parseFloat(kilometromaximo),
+                    calleminima: $('#input_calleminima').val(),
+                    callemaxima: $('#input_callemaxima').val(),
+                    avenidaminima: $('#input_avenidaminima').val(),
+                    avenidamaxima: $('#input_avenidamaxima').val(),
+                    kilometrominimo: $('#input_kilometrominimo').val(),
+                    kilometromaximo: $('#input_kilometromaximo').val(),
                     minimo: $('#input_minimo').val(),
                     garantia: $('#input_garantia').val(),
                     horalimite: $('#intput_horalimite').val(),
@@ -290,7 +267,17 @@ $('#btnregistraruno').on('click', () => {
                 },
                 success: (data) => {
                     $('#exampleModal').modal('hide')
-                    MN_VS_2(data.Titulo, data.color, data.msj)
+                    switch(Number(data.__error)){
+                        case 1:
+                            MN_VS_2('Error!', 'bg-danger', 'Error en la conexion a la base de datos') 
+                        break;
+                        case 2: 
+                            MN_VS_2('Problemas', 'bg-warning', 'No se pudo registrar la dirrecion')
+                        break;
+                        case 0: 
+                            MN_VS_2('Exito!!', 'bg-success', `Se registro la sectorizacion con id: ${data.datos.Id}`)
+                        break;
+                    }
                 }
             });
     }else{
