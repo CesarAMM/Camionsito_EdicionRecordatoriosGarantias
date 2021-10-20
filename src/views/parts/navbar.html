@@ -2,12 +2,12 @@
   <div class="container-lg d-flex flex-wrap">
     <a href="/Recordatorios" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
       <img src="img/logo.png" width="60">
-      <span class="fs-3 text-orange fw-bold">&nbsp; Camioncito - <%=page%></span>
+      <span class="fs-3 text-dark fw-bold">&nbsp; Camioncito - <%=page%></span>
     </a>
     <div class="d-flex align-items-center">
       <div class="flex-shrink-0 dropdown">
-        <a href="#" class="d-block text-orange text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="fw-bold text-orange"><%=user%> <i class="fa fa-user"></i></span>
+        <a href="#" class="d-block text-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="fw-bold text-dark"><%=user%> <i class="fa fa-user"></i></span>
         </a>
         <ul class="dropdown-menu text-small shadow">
           <%if(rol >= 13){%>
@@ -22,8 +22,8 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <%if(IdPage === 'Recordatorios'){%>
       <div class="flex-shrink-0 dropdown">
-        <a href="#" class="d-block text-orange text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="fw-bold text-orange"> Opciones <i class="fa fa-external-link-alt"></i></span>
+        <a href="#" class="d-block text-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="fw-bold text-dark"> Opciones <i class="fa fa-external-link-alt"></i></span>
         </a>
         <ul class="dropdown-menu text-small shadow">
           <%if(rol >= 12){%>
@@ -41,3 +41,5 @@
     </div>
   </div>
 </nav>
+
+<div style="height: 40px;"></div>

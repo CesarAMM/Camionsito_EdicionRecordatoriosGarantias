@@ -84,10 +84,10 @@ $('#id_Tienda').on('change', () => {
             switch(Number(data.__error)){
                 case 0:
                     localStorage.setItem('horarios', JSON.stringify(data.Horarios))
-                    $('#id_Tiempos').val(data.Encabezado[0].Tiempo)
-                    $('#Id_Motivo').val(data.Encabezado[0].Motivo)
-                    $('#POS').val(data.Encabezado[0].POS)
-                    $('#Id_Comentario').val(data.Encabezado[0].Comentario)
+                    $('#id_Tiempos').val(data.Encabezado.Tiempo)
+                    $('#Id_Motivo').val(data.Encabezado.Motivo)
+                    $('#POS').val(data.Encabezado.POS)
+                    $('#Id_Comentarios').html(data.Encabezado.Comentario)
                     MN_VS_2(`Exito: ${$('#id_Tienda').val()}`,'bg-success', `Se han cargado los recordatorios`)
                     break;
                 case 1:

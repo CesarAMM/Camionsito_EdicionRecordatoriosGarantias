@@ -54,7 +54,7 @@ app.post('/getRecordatorios', async (req, res) => {
             .input('CodigoTienda', sql.Int, codigotienda)
             .execute('Sp_Camioncito_Sel_Recordatorios_Tienda');
         await pool.close();
-        res.json({ __error: 0, Encabezado: data.recordsets[0], Horarios: data.recordsets[1] })
+        res.json({ __error: 0, Encabezado: data.recordsets[0][0], Horarios: data.recordsets[1] })
     } catch (error) {
         res.json({ __error: 1 })
     }
@@ -140,8 +140,9 @@ app.post('/upd_HorariosTienda', async (req, res)=>{
 
 app.get('/set_restaurarrecordatorios', async (req, res) => {
     try {
-        let pool = await (await new sql.ConnectionPool(connection.db_Camioncito).connect()).request().
-            input('User', sql.Int, req.session.iduser)
+        let pool = await new sql.ConnectionPool(connection.db_Camioncito).connect()
+        let data = await pool.request()
+            .input('User', sql.Int, req.session.iduser)
             .execute('Sp_Camioncito_upd_RestauracionRecordatorios');
         await pool.close();
         res.json({ __error: 0 })
